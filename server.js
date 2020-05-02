@@ -70,7 +70,7 @@ function serverHandler(request, response) {
             }
         }
 
-        /* if(filename.indexOf(resolveURL('/admin/')) !== -1 && config.enableAdmin !== true) {
+        if(filename.indexOf(resolveURL('/admin/')) !== -1 && config.enableAdmin !== true) {
             try {
                 response.writeHead(401, {
                     'Content-Type': 'text/plain'
@@ -82,14 +82,14 @@ function serverHandler(request, response) {
                 pushLogs(config, '!GET or ..', e);
             }
             return;
-        } */
+        }
 
         var matched = false;
-        /* ['/demos/', '/dev/', '/dist/', '/socket.io/', '/node_modules/canvas-designer/', '/admin/'].forEach(function(item) {
+        ['/demos/', '/dev/', '/dist/', '/socket.io/', '/node_modules/canvas-designer/', '/admin/'].forEach(function(item) {
             if (filename.indexOf(resolveURL(item)) !== -1) {
                 matched = true;
             }
-        }); */
+        });
 
         // files from node_modules
         ['RecordRTC.js', 'FileBufferReader.js', 'getStats.js', 'getScreenId.js', 'adapter.js', 'MultiStreamsMixer.js'].forEach(function(item) {
@@ -111,7 +111,7 @@ function serverHandler(request, response) {
             }
         }
 
-       /*  ['Video-Broadcasting', 'Screen-Sharing', 'Switch-Cameras'].forEach(function(fname) {
+        ['Video-Broadcasting', 'Screen-Sharing', 'Switch-Cameras'].forEach(function(fname) {
             try {
                 if (filename.indexOf(fname + '.html') !== -1) {
                     filename = filename.replace(fname + '.html', fname.toLowerCase() + '.html');
@@ -120,7 +120,7 @@ function serverHandler(request, response) {
                 pushLogs(config, 'forEach', e);
             }
         });
- */
+
         var stats;
 
         try {
@@ -152,10 +152,23 @@ function serverHandler(request, response) {
                     'Content-Type': 'text/html'
                 });
 
-               if (filename.indexOf(resolveURL('/demos/dashboard/')) !== -1) {
+                if (filename.indexOf(resolveURL('/demos/MultiRTC/')) !== -1) {
+                    filename = filename.replace(resolveURL('/demos/MultiRTC/'), '');
+                    filename += resolveURL('/demos/MultiRTC/index.html');
+                } else if (filename.indexOf(resolveURL('/admin/')) !== -1) {
+                    filename = filename.replace(resolveURL('/admin/'), '');
+                    filename += resolveURL('/admin/index.html');
+                } else if (filename.indexOf(resolveURL('/demos/dashboard/')) !== -1) {
                     filename = filename.replace(resolveURL('/demos/dashboard/'), '');
                     filename += resolveURL('/demos/dashboard/index.html');
-                }else {
+                } else if (filename.indexOf(resolveURL('/demos/video-conference/')) !== -1) {
+                    filename = filename.replace(resolveURL('/demos/video-conference/'), '');
+                    filename += resolveURL('/demos/video-conference/index.html');
+                } else if (filename.indexOf(resolveURL('/demos')) !== -1) {
+                    filename = filename.replace(resolveURL('/demos/'), '');
+                    filename = filename.replace(resolveURL('/demos'), '');
+                    filename += resolveURL('/demos/index.html');
+                } else {
                     filename += resolveURL(config.homePage);
                 }
             }
@@ -164,7 +177,6 @@ function serverHandler(request, response) {
         }
 
         var contentType = 'text/plain';
-        console.log(filename);
         if (filename.toLowerCase().indexOf('.html') !== -1) {
             contentType = 'text/html';
         }
@@ -174,9 +186,10 @@ function serverHandler(request, response) {
         if (filename.toLowerCase().indexOf('.png') !== -1) {
             contentType = 'image/png';
         }
-         if (filename.toLowerCase().indexOf('.js') !== -1) {
+        if (filename.toLowerCase().indexOf('.js') !== -1) {
             contentType = 'text/javascript';
         }
+      
 
         fs.readFile(filename, 'binary', function(err, file) {
             if (err) {
@@ -191,7 +204,7 @@ function serverHandler(request, response) {
             try {
                 file = file.replace('connection.socketURL = \'/\';', 'connection.socketURL = \'' + config.socketURL + '\';');
             } catch (e) {}
-
+                
             response.writeHead(200, {
                 'Content-Type': contentType
             });
