@@ -164,6 +164,7 @@ function serverHandler(request, response) {
         }
 
         var contentType = 'text/plain';
+        console.log(filename);
         if (filename.toLowerCase().indexOf('.html') !== -1) {
             contentType = 'text/html';
         }
@@ -172,6 +173,9 @@ function serverHandler(request, response) {
         }
         if (filename.toLowerCase().indexOf('.png') !== -1) {
             contentType = 'image/png';
+        }
+         if (filename.toLowerCase().indexOf('.js') !== -1) {
+            contentType = 'text/javascript';
         }
 
         fs.readFile(filename, 'binary', function(err, file) {
