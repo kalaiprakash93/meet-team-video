@@ -1,14 +1,10 @@
-﻿<!-- Demo version: 2018.12.11 -->
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Dashboard + Video Conferencing + Chat + File Sharing | RTCMultiConnection</title>
-  <meta name="description" content="WebRTC Dashboard including support for canvas drawing, canvas data syncing, video conferencing, screen sharing and video conferencing. Including chat and file sharing.">
-
-  <link rel="shortcut icon" href="/demos/logo.png">
+  <title>Video Conferencing</title>
   <link rel="stylesheet" type="text/css" href="/demos/css/emojionearea.min.css">
 
   <script src="/demos/js/jquery.min.js"></script>
@@ -161,6 +157,7 @@ hr {
 
 <div>
     <video id="main-video" controls playsinline autoplay></video>
+    <div id="host-name"></div>
     <div id="other-videos"></div>
     <hr>
     <div style="padding: 5px 10px;">
@@ -177,7 +174,7 @@ hr {
         <button class="btn btn-primary" id="btn-chat-message" disabled>Send</button>
         <img id="btn-attach-file" src="https://www.webrtc-experiment.com/images/attach-file.png" title="Attach a File">
         <img id="btn-share-screen" src="https://www.webrtc-experiment.com/images/share-screen.png" title="Share Your Screen">
-    </div>
+    <!--</div>-->
 </div>
 </article>
 
@@ -217,17 +214,13 @@ connection.maxParticipantsAllowed = 1000;
 
 /* // here goes canvas designer
 var designer = new CanvasDesigner();
-
 // you can place widget.html anywhere
 designer.widgetHtmlURL = '/node_modules/canvas-designer/widget.html';
 designer.widgetJsURL = '/node_modules/canvas-designer/widget.min.js'
-
 designer.addSyncListener(function(data) {
     connection.send(data);
 });
-
 designer.setSelected('pencil');
-
 designer.setTools({
     pencil: true,
     text: true,
@@ -278,8 +271,8 @@ connection.onUserStatusChanged = function(event) {
     } else {
         names = [connection.extra.userFullName || 'You'].concat(names);
     }
-
-    infoBar.innerHTML = '<b>Active users:</b> ' + names.join(', ');
+    console.log("connected_users:",names.length);
+    infoBar.innerHTML = '<b>Active users('+names.length+'):</b>'+names.join(', ');
 };
 
 connection.onopen = function(event) {
@@ -348,7 +341,6 @@ connection.onmessage = function(event) {
         designer.sync();
         return;
     }
-
     designer.syncData(event.data); */
 };
 
@@ -363,6 +355,7 @@ connection.onstream = function(event) {
         var video = document.getElementById('main-video');
         video.setAttribute('data-streamid', event.streamid);
         // video.style.display = 'none';
+        document.getElementById("host-name").innerHTML = event.extra.userFullName +"  (Host)";
         if(event.type === 'local') {
             video.muted = true;
             video.volume = 0;
